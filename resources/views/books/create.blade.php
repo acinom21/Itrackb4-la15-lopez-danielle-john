@@ -36,9 +36,7 @@
                     class="form-select @error('genre_id') is-invalid @enderror">
                 <option value="">-- Select a genre --</option>
                 @foreach ($genres as $g)
-                    <option value="{{ $g->id }}" @selected(old('genre_id') == $g->id)>
-                        {{ $g->name }}
-                    </option>
+                    <option value="{{ $g->id }}" @selected(old('genre_id') == $g->id)>{{ $g->name }}</option>
                 @endforeach
             </select>
             @error('genre_id') <div class="invalid-feedback">{{ $message }}</div> @enderror

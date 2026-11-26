@@ -10,16 +10,17 @@ use Illuminate\Support\Facades\Route;
 // Front page
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// These must come BEFORE the resource route, or /books/{book} intercepts them
+// These must come BEFORE the resource route
 Route::get('/books/feature', [BookController::class, 'feature'])
     ->name('books.feature');
 
-// Kept so old bookmarks to /books/filter/{genre} don't 404.
 Route::get('/books/filter/{genre?}', [BookController::class, 'redirectOldFilter'])
     ->name('books.filter');
 
-// Part D: auth on five actions only; index and show stay public
+// auth on five actions only; index and show stay public.
+// whereNumber means {book} only matches digits, so /books/create can never be read as a book id.
 Route::resource('books', BookController::class)
+    ->whereNumber('book')
     ->middlewareFor(['create', 'store', 'edit', 'update', 'destroy'], 'auth');
 
 Route::get('/teachers/featured', [TeacherController::class, 'featured'])
@@ -28,11 +29,11 @@ Route::get('/teachers/featured', [TeacherController::class, 'featured'])
 Route::resource('teachers', TeacherController::class)
     ->only(['index', 'show']);
 
-// Part A: Register
+// Register
 Route::get('/register',  [RegisterController::class, 'create'])->name('register');
 Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
 
-// Part C: Login / Logout
+// Login / Logout
 Route::get('/login', [LoginController::class, 'create'])->name('login');
 Route::post('/login',  [LoginController::class, 'store'])->name('login.store');
 Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');

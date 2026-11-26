@@ -19,15 +19,16 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('books.index'));
+            return redirect()->intended(route('books.index'))
+                ->with('success', 'You have logged in successfully.');
         }
 
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+        return back()
+            ->withErrors(['email' => 'These credentials do not match our records.'])
+            ->onlyInput('email');
     }
 
     public function destroy(Request $request)
@@ -37,7 +38,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('home')
-            ->with('success', 'You have been logged out.');
+        return redirect()->route('home');
     }
 }

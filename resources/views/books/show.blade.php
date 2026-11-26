@@ -19,14 +19,19 @@
 
     <div class="d-flex gap-2">
         <a href="{{ route('books.index') }}" class="btn btn-secondary">Back to List</a>
-        <a href="{{ route('books.edit', $book) }}" class="btn btn-outline-primary">Edit</a>
 
-        <form action="{{ route('books.destroy', $book) }}" method="POST"
-              onsubmit="return confirm('Delete this book?')">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="btn btn-danger">Delete</button>
-        </form>
+        @can('update', $book)
+            <a href="{{ route('books.edit', $book) }}" class="btn btn-outline-primary">Edit</a>
+        @endcan
+
+        @can('delete', $book)
+            <form action="{{ route('books.destroy', $book) }}" method="POST"
+                  onsubmit="return confirm('Delete this book?')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        @endcan
     </div>
 
 @endsection

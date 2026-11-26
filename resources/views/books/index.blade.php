@@ -6,9 +6,13 @@
 
     <h2 class="mb-3">List of Recommendations</h2>
 
-    @auth
+    @can('create', App\Models\Book::class)
         <a href="{{ route('books.create') }}" class="btn btn-success mb-3">+ Add Book</a>
-    @endauth
+    @endcan
+
+    @cannot('create', App\Models\Book::class)
+        <p class="text-muted small">You are viewing this list in read-only mode.</p>
+    @endcannot
 
     <form method="GET" action="{{ route('books.index') }}" class="row g-2 mb-3">
         <div class="col-md-3">
@@ -53,19 +57,21 @@
     <table class="table table-striped align-middle">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>#</th>
                 <th>Title</th>
                 <th>Author</th>
                 <th>Year</th>
                 <th>Genre</th>
-                <th>Actions</th>
+                @can('create', App\Models\Book::class)
+                    <th>Actions</th>
+                @endcan
             </tr>
         </thead>
         <tbody>
             @forelse ($books as $book)
                 <tr>
-                    <td>{{ $book->id }}</td>
-                    <td>{{ $book->title }}</td>
+                    <td>{{ $books->firstItem() + $loop->index }}</td>
+                    <td><a href="{{ route('books.show', $book) }}">{{ $book->title }}</a></td>
                     <td>{{ $book->author }}</td>
                     <td>
                         {{ $book->year }}
@@ -80,24 +86,22 @@
                             {{ $book->genre->name }}
                         </a>
                     </td>
-                    <td>
-                        <div class="d-flex gap-1">
-                            {{-- Bukas sa lahat --}}
-                            <a href="{{ route('books.show', $book) }}" class="btn btn-sm btn-outline-secondary">View</a>
-
-                            {{-- Para lang sa naka-sign in --}}
-                            @auth
+                    @can('update', $book)
+                        <td>
+                            <div class="d-flex gap-1">
                                 <a href="{{ route('books.edit', $book) }}" class="btn btn-sm btn-outline-primary">Edit</a>
 
-                                <form action="{{ route('books.destroy', $book) }}" method="POST"
-                                      onsubmit="return confirm('Delete this book?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                                </form>
-                            @endauth
-                        </div>
-                    </td>
+                                @can('delete', $book)
+                                    <form action="{{ route('books.destroy', $book) }}" method="POST"
+                                          onsubmit="return confirm('Delete this book?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                    </form>
+                                @endcan
+                            </div>
+                        </td>
+                    @endcan
                 </tr>
             @empty
                 <tr>

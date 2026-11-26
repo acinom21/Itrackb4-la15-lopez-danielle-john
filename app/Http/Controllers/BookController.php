@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use App\Models\Book;
 use App\Models\Genre;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 
 class BookController extends Controller
 {
@@ -15,7 +16,6 @@ class BookController extends Controller
         $genre    = $request->query('genre');
         $featured = $request->query('featured');
 
-        // Part I: only these columns may be sorted on
         $sort = $request->query('sort', 'title');
 
         if (! in_array($sort, ['title', 'year'])) {
@@ -47,6 +47,8 @@ class BookController extends Controller
 
     public function create()
     {
+        Gate::authorize('create', Book::class);
+
         return view('books.create', [
             'genres' => Genre::all(),
         ]);
@@ -54,6 +56,8 @@ class BookController extends Controller
 
     public function store(Request $request)
     {
+        Gate::authorize('create', Book::class);
+
         $validated = $request->validate([
             'title'    => 'required|string|max:255',
             'author'   => 'required|string|max:255',
@@ -81,6 +85,8 @@ class BookController extends Controller
 
     public function edit(Book $book)
     {
+        Gate::authorize('update', $book);
+
         $genres = Genre::all();
 
         return view('books.edit', compact('book', 'genres'));
@@ -88,6 +94,8 @@ class BookController extends Controller
 
     public function update(Request $request, Book $book)
     {
+        Gate::authorize('update', $book);
+
         $validated = $request->validate([
             'title'    => 'required|string|max:255',
             'author'   => 'required|string|max:255',
@@ -103,6 +111,8 @@ class BookController extends Controller
 
     public function destroy(Book $book)
     {
+        Gate::authorize('delete', $book);
+
         abort_if($book->genre->books()->count() === 1, 403);
 
         $book->delete();

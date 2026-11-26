@@ -2,19 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title', 'Libsys Portal')</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@yield('title', 'Library Portal')</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f6f7fb; }
+        .page-card { background: #fff; border-radius: .75rem; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+    </style>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
-    <div class="container mt-4 mb-5">
+    @include('partials._nav')
 
-        <h1 class="mb-1">Library Portal</h1>
-        <p class="text-muted mb-3">Prepared by: Danielle John T. Lopez</p>
-
-        @include('partials._nav')
-
+    <main class="container my-4 flex-grow-1">
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
@@ -22,10 +23,15 @@
             </div>
         @endif
 
-        @yield('content')
+        <div class="page-card p-4">
+            @yield('content')
+        </div>
+    </main>
 
-    </div>
+    <footer class="text-center text-muted small py-3">
+        &copy; {{ date('Y') }} Library Portal
+    </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
